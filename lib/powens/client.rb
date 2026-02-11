@@ -40,7 +40,12 @@ module Powens
     # @param temporary_token [String] The temporary auth_token from create_user
     # @return [Hash] { token:, type: "permanent" }
     def get_permanent_token(temporary_token)
-      post("auth/token/access", {}, auth_type: :bearer, token: temporary_token)
+      # Powens requires client credentials in the body for this endpoint
+      body = {
+        client_id: @config.client_id,
+        client_secret: @config.client_secret
+      }
+      post("auth/token/access", body, auth_type: :bearer, token: temporary_token)
     end
 
     # Generate a temporary code for the webview
