@@ -65,7 +65,7 @@ RSpec.describe Powens::Client do
     let(:client) { Powens.client(user_token: "perm_token") }
 
     it "generates a temporary code for webview" do
-      stub_powens_request(:post, "/auth/token/code",
+      stub_powens_request(:get, "/auth/token/code",
         response_body: {
           code: "abc123",
           type: "temporary",
