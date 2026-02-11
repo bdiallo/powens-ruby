@@ -53,7 +53,7 @@ module Powens
     #
     # @return [Hash] { code:, type: "temporary", expires_in: }
     def create_temporary_code
-      post("auth/token/code", {}, auth_type: :bearer, token: @user_token)
+      get("auth/token/code")
     end
 
     # Get user information
