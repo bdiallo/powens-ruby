@@ -170,14 +170,17 @@ module Powens
     #
     # @param user_id [String, Integer] User ID or "me"
     # @param connection_id [Integer, nil] Filter by connection
+    # @param expand [String, nil] Fields to expand (e.g., "connection,connection.connector")
     # @return [Hash] { accounts: [...] }
-    def list_accounts(user_id: "me", connection_id: nil)
+    def list_accounts(user_id: "me", connection_id: nil, expand: nil)
       path = if connection_id
                "users/#{user_id}/connections/#{connection_id}/accounts"
              else
                "users/#{user_id}/accounts"
              end
-      get(path)
+      params = {}
+      params[:expand] = expand if expand
+      get(path, params)
     end
 
     # Get a specific account
