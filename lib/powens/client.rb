@@ -73,6 +73,24 @@ module Powens
       delete("users/#{user_id}")
     end
 
+    # Renew a permanent token for an existing user
+    # Use this when the current token is invalid/lost but you have the user ID
+    # This does NOT require the old token - uses client credentials
+    #
+    # @param user_id [String, Integer] The Powens user ID (external_user_id)
+    # @param revoke_previous [Boolean] Whether to revoke previous tokens (default: true)
+    # @return [Hash] { access_token:, token_type: "Bearer" }
+    def renew_token(user_id, revoke_previous: true)
+      body = {
+        grant_type: "client_credentials",
+        client_id: @config.client_id,
+        client_secret: @config.client_secret,
+        id_user: user_id.to_i,
+        revoke_previous: revoke_previous
+      }
+      post("auth/renew", body, auth_type: :none)
+    end
+
     # ═══════════════════════════════════════════════════════════════════════════
     # Webview URLs
     # ═══════════════════════════════════════════════════════════════════════════
@@ -442,7 +460,14 @@ module Powens
 
     def post(path, body = {}, auth_type: :bearer, token: nil)
       response = @conn.post(path) do |req|
-        req.headers.merge!(auth_type == :config ? config_headers : bearer_headers(token || @user_token))
+        case auth_type
+        when :config
+          req.headers.merge!(config_headers)
+        when :none
+          # No auth headers - used for /auth/renew with client creds in body
+        else
+          req.headers.merge!(bearer_headers(token || @user_token))
+        end
         req.body = body
       end
       parse_response(response)
