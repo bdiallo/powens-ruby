@@ -163,7 +163,8 @@ account = client.get_account(1000)
 accounts = client.list_accounts(connection_id: 100)
 
 # List accounts with expanded connector data (bank name, logo, etc.)
-accounts = client.list_accounts(expand: 'connection,connection.connector')
+# Use nested expand syntax: 'connection.connector' (not comma-separated!)
+accounts = client.list_accounts(expand: 'connection.connector')
 accounts[:accounts].each do |account|
   bank_name = account.dig(:connection, :connector, :name)
   bank_logo = account.dig(:connection, :connector, :logo)
@@ -364,7 +365,7 @@ end
 - `delete_connection(connection_id, user_id: "me")` - Delete connection
 
 #### Accounts
-- `list_accounts(user_id: "me", connection_id: nil, expand: nil)` - List accounts (use `expand: 'connection,connection.connector'` for bank info)
+- `list_accounts(user_id: "me", connection_id: nil, expand: nil)` - List accounts (use `expand: 'connection.connector'` for bank info)
 - `get_account(account_id, user_id: "me")` - Get account
 - `update_account(account_id, user_id: "me", **attrs)` - Update account
 

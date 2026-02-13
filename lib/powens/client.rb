@@ -188,7 +188,7 @@ module Powens
     #
     # @param user_id [String, Integer] User ID or "me"
     # @param connection_id [Integer, nil] Filter by connection
-    # @param expand [String, nil] Fields to expand (e.g., "connection,connection.connector")
+    # @param expand [String, nil] Fields to expand (e.g., "connection.connector" for bank info)
     # @return [Hash] { accounts: [...] }
     def list_accounts(user_id: "me", connection_id: nil, expand: nil)
       path = if connection_id
