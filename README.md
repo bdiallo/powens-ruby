@@ -100,6 +100,27 @@ webview_url = user_client.webview_url
 # => "https://webview.powens.com/connect?token=perm_yyy"
 ```
 
+### Token Renewal
+
+If a token becomes invalid (lost, corrupted, or revoked), you can generate a NEW permanent token for the same Powens user without user interaction:
+
+```ruby
+# Token renewal - uses server credentials, NOT the old token
+client = Powens.client  # No user_token needed
+
+# Renew token for existing user (requires id_user from create_user)
+result = client.renew_token(42, revoke_previous: true)
+# => { access_token: "new_perm_zzz", token_type: "Bearer" }
+
+new_token = result[:access_token]
+
+# Now use the new token
+user_client = Powens.client(user_token: new_token)
+user_client.list_accounts  # Works!
+```
+
+**Important:** Always store the `id_user` returned by `create_user` - it's required for token renewal.
+
 ### Managing Connections
 
 ```ruby
@@ -321,8 +342,9 @@ end
 ### Client Methods
 
 #### Authentication
-- `create_user` - Create temporary user
+- `create_user` - Create temporary user (returns `id_user` - store it!)
 - `get_permanent_token(temp_token)` - Exchange for permanent token
+- `renew_token(user_id, revoke_previous: true)` - Generate new token for existing user (no old token needed)
 - `create_temporary_code` - Generate code for webview
 - `get_user(user_id = "me")` - Get user info
 - `delete_user(user_id)` - Delete user
