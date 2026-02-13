@@ -148,18 +148,24 @@ module Powens
     # List all connections for a user
     #
     # @param user_id [String, Integer] User ID or "me"
+    # @param expand [String, nil] Fields to expand (e.g., "connector" for bank info)
     # @return [Hash] { connections: [...] }
-    def list_connections(user_id: "me")
-      get("users/#{user_id}/connections")
+    def list_connections(user_id: "me", expand: nil)
+      params = {}
+      params[:expand] = expand if expand
+      get("users/#{user_id}/connections", params)
     end
 
     # Get a specific connection
     #
     # @param connection_id [Integer] Connection ID
     # @param user_id [String, Integer] User ID or "me"
+    # @param expand [String, nil] Fields to expand (e.g., "connector" for bank info)
     # @return [Hash] Connection data with status, error info, etc.
-    def get_connection(connection_id, user_id: "me")
-      get("users/#{user_id}/connections/#{connection_id}")
+    def get_connection(connection_id, user_id: "me", expand: nil)
+      params = {}
+      params[:expand] = expand if expand
+      get("users/#{user_id}/connections/#{connection_id}", params)
     end
 
     # Trigger a manual sync for a connection
